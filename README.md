@@ -1,7 +1,7 @@
 # Data Engineering Course - Exercise Solutions
 
 **Student:** Sherif Elashmawy  
-**Course:** Data Engineering and Analytics  
+**Course:** Data Engineering  
 
 ## About This Repository
 
