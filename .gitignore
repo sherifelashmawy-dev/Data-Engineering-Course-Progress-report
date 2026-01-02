@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+conda_env/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+
+# Large data files
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Google Cloud credentials
+*-credentials.json
+*.json
+!package.json
