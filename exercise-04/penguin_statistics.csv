@@ -1,0 +1,8 @@
+island,sex,penguin_count,avg_body_mass,avg_culmen_length,avg_culmen_depth,min_body_mass,max_body_mass,stddev_body_mass
+Biscoe,.,1,4875.0,44.5,15.7,4875.0,4875.0,
+Biscoe,FEMALE,80,4319.38,43.31,15.19,2850.0,5200.0,659.75
+Biscoe,MALE,83,5104.52,47.12,16.6,3550.0,6300.0,714.2
+Dream,FEMALE,61,3446.31,42.3,17.6,2700.0,4150.0,269.52
+Dream,MALE,62,3987.1,46.12,19.07,3250.0,4800.0,349.52
+Torgersen,FEMALE,24,3395.83,37.55,17.55,2900.0,3800.0,259.14
+Torgersen,MALE,23,4034.78,40.59,19.39,3325.0,4700.0,372.47
