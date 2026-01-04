@@ -3,6 +3,17 @@
 ## Objective
 Build a complete real-time data streaming pipeline using Apache Kafka to monitor electricity price changes, store the data, and visualize it in a dashboard.
 
+## Important Note
+
+This exercise **reuses the existing Kafka infrastructure** from the FMI weather project:
+- **Zookeeper**: Already running on port 2181
+- **Kafka Broker**: Already running on port 9092  
+- **Kafka UI**: Already running on http://localhost:8080
+
+Therefore, we did **not** start new containers with the provided `docker-compose.yml`. Instead, the producer and consumer connect directly to the existing Kafka instance.
+
+**Port Note:** Kafka UI uses port 8080, which is why Airflow (Exercise 16) was configured to use port 8081.
+
 ## System Architecture
 ```
 ┌─────────────────┐      ┌──────────────┐      ┌─────────────────┐
@@ -12,7 +23,7 @@ Build a complete real-time data streaming pipeline using Apache Kafka to monitor
          │                      │                        │
          │                      │                        │
     Producer                  Broker                    │
-   (Monitor)                                             │
+   (Monitor)              (localhost:9092)               │
                                                          ▼
                                                ┌─────────────────┐
                                                │   Streamlit     │
@@ -37,7 +48,7 @@ Build a complete real-time data streaming pipeline using Apache Kafka to monitor
 ### c) Visualization (`streamlit_app.py`)
 - Real-time dashboard displaying price trends
 - Interactive charts and statistics
-- Auto-refresh capability
+- Auto-refresh capability every 10 seconds
 - Hourly price analysis
 - Distribution histograms
 
@@ -64,20 +75,20 @@ received_timestamp,price,startDate,endDate,source
 
 ## Setup Instructions
 
-### 1. Start Kafka Infrastructure
-```bash
-docker-compose up -d
-```
-
-Verify containers:
-```bash
-docker ps
-```
-
-### 2. Install Python Dependencies
+### 1. Install Python Dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
+### 2. Verify Kafka is Running
+```bash
+docker ps | grep kafka
+```
+
+You should see:
+- `fmi-zookeeper` on port 2181
+- `fmi-kafka` on port 9092
+- `fmi-kafka-ui` on port 8080
 
 ### 3. Run Producer
 ```bash
@@ -95,16 +106,18 @@ python consumer.py
 ```
 
 The consumer will:
-- Read messages from Kafka
+- Read messages from Kafka topic `electricity-prices`
 - Save to `data/electricity_prices.csv`
 - Display progress
 
 ### 5. Run Dashboard (New Terminal)
 ```bash
-streamlit run streamlit_app.py
+streamlit run streamlit_app.py --server.port 8502
 ```
 
-Access dashboard at: **http://localhost:8501**
+Access dashboard at: **http://localhost:8502**
+
+**Note:** Port 8502 is used because port 8501 is occupied by the population visualization app from Exercise 09.
 
 ## Kafka UI
 
@@ -112,18 +125,16 @@ Monitor Kafka topics and messages at: **http://localhost:8080**
 
 ## Testing the System
 
-### Method 1: Simulate File Update
+### Trigger File Update
 ```bash
 # Touch the file to trigger change detection
 touch /Users/selashma20/Downloads/latest-prices.json
 ```
 
-### Method 2: Update File Content
-```bash
-# Copy and modify the file
-cp /Users/selashma20/Downloads/latest-prices.json /Users/selashma20/Downloads/latest-prices-backup.json
-# Edit and save back
-```
+Watch what happens:
+1. **Producer terminal** - Shows "File changed detected" and messages sent
+2. **Consumer terminal** - Shows messages being saved  
+3. **Dashboard** - Updates with new data
 
 ## Features
 
@@ -132,6 +143,7 @@ cp /Users/selashma20/Downloads/latest-prices.json /Users/selashma20/Downloads/la
 ✅ Automatic retry on failures  
 ✅ Timestamped messages  
 ✅ Partitioning by startDate  
+✅ Continuous monitoring every 10 seconds
 
 ### Consumer Features
 ✅ Persistent CSV storage  
@@ -143,17 +155,22 @@ cp /Users/selashma20/Downloads/latest-prices.json /Users/selashma20/Downloads/la
 ✅ Real-time price monitoring  
 ✅ Auto-refresh every 10 seconds  
 ✅ Interactive Plotly charts  
+✅ Current price with delta from average
 ✅ Hourly price analysis  
 ✅ Statistical summaries  
 ✅ Price distribution histogram  
-✅ Configurable time range  
+✅ Configurable time range (1-48 hours)
+✅ Recent price data table
 
 ## Kafka Configuration
 
 **Topic:** `electricity-prices`  
-**Partitions:** 1  
-**Replication Factor:** 1  
+**Broker:** localhost:9092  
 **Consumer Group:** `electricity-price-consumer`  
+
+## Results
+
+Successfully processed **193 electricity price records** through the Kafka streaming pipeline with 15-minute interval data from the electricity price feed.
 
 ## Stopping the System
 ```bash
@@ -161,34 +178,36 @@ cp /Users/selashma20/Downloads/latest-prices.json /Users/selashma20/Downloads/la
 # Stop consumer: Ctrl+C
 # Stop Streamlit: Ctrl+C
 
-# Stop Kafka infrastructure
-docker-compose down
+# Kafka infrastructure remains running for other projects
 ```
 
 ## Troubleshooting
 
 **Issue:** Producer can't connect to Kafka  
-**Solution:** Check if Kafka is running: `docker ps`
+**Solution:** Check if Kafka is running: `docker ps | grep kafka`
 
 **Issue:** No data in dashboard  
 **Solution:** Ensure consumer is running and has processed messages
 
 **Issue:** File changes not detected  
-**Solution:** Manually touch the file: `touch /path/to/latest-prices.json`
+**Solution:** Manually touch the file: `touch /Users/selashma20/Downloads/latest-prices.json`
+
+**Issue:** Timezone mismatch error in Streamlit  
+**Solution:** Already fixed - timestamps are parsed with `utc=True`
 
 ## Output Files
 
-- `data/electricity_prices.csv` - All historical price data
-- Docker volumes for Kafka/Zookeeper persistence
+- `data/electricity_prices.csv` - All historical price data (193 records)
+- Docker volumes for Kafka/Zookeeper persistence (shared with FMI project)
 
 ## Technology Stack
 
-- **Message Broker:** Apache Kafka
-- **Producer Library:** kafka-python
-- **Consumer Library:** kafka-python
-- **Visualization:** Streamlit + Plotly
-- **Data Processing:** Pandas
-- **Containerization:** Docker Compose
+- **Message Broker:** Apache Kafka (reused from FMI project)
+- **Producer Library:** kafka-python 2.0.2
+- **Consumer Library:** kafka-python 2.0.2
+- **Visualization:** Streamlit 1.40.0 + Plotly 5.18.0
+- **Data Processing:** Pandas 2.1.4
+- **Containerization:** Docker (existing infrastructure)
 
 ---
 
