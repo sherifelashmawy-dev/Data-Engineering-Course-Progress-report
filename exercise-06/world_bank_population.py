@@ -21,7 +21,7 @@ client = bigquery.Client()
 # Public dataset reference
 SOURCE_TABLE = "bigquery-public-data.world_bank_global_population.population_by_country"
 
-# Your project and dataset for results
+# MY project and dataset for results
 PROJECT_ID = "data-analytics-project-482302"
 DATASET_ID = "world_bank_analysis"
 TABLE_ID = "nordic_population"
