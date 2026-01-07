@@ -20,7 +20,7 @@ client = bigquery.Client()
 # Source table (wildcard table)
 SOURCE_TABLE = "bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*"
 
-# Your project and dataset for results
+# My project and dataset for results
 PROJECT_ID = "data-analytics-project-482302"
 DATASET_ID = "G4_daily_user"
 TABLE_ID = "G4_daily_user_data"
