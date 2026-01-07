@@ -14,13 +14,12 @@ import pandas as pd
 import os
 
 # Initialize BigQuery client
-# Make sure your Google Cloud credentials are set up
 client = bigquery.Client()
 
 # Public dataset reference
 SOURCE_TABLE = "bigquery-public-data.ml_datasets.penguins"
 
-# Your project and dataset for results
+# My project and dataset for results
 PROJECT_ID = "data-analytics-project-482302"
 DATASET_ID = "penguins_analysis"
 TABLE_ID = "penguin_stats_by_island_sex"
