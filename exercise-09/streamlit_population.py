@@ -1,4 +1,4 @@
-#b) Use streamlit and create an interactive web graph where you can select the countries 
+#b) Use streamlit and create an interactive web graph where I can select the countries 
 #to be included in the population plot
 
 #Read data:
